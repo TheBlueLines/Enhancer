@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33020.496
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enhancer", "Enhancer.csproj", "{AFBD3314-205E-418B-95F6-093C5AF57E2B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AFBD3314-205E-418B-95F6-093C5AF57E2B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AFBD3314-205E-418B-95F6-093C5AF57E2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AFBD3314-205E-418B-95F6-093C5AF57E2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AFBD3314-205E-418B-95F6-093C5AF57E2B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8557F76B-D14A-4D2A-8BEC-DDFB4351E9E5}
+	EndGlobalSection
+EndGlobal

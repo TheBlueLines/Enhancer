@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <ApplicationIcon>assembly.ico</ApplicationIcon>
+    <NoWin32Manifest>true</NoWin32Manifest>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="assembly.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Debris">
+      <HintPath>..\Debris\bin\Debug\net6.0\Debris.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
