@@ -5,6 +5,7 @@ namespace Enhancer
 {
 	public partial class Form1 : Form
 	{
+		private bool good = true;
 		public string? path = null;
 		private List<string> files = new();
 		private int? nzx = null;
@@ -59,6 +60,10 @@ namespace Enhancer
 		}
 		private void save_Click(object sender, EventArgs e)
 		{
+			if (nzx != null)
+			{
+				files[nzx.Value] = text.Text;
+			}
 			save.Enabled = false;
 			List<byte[]> bytes = new();
 			for (int i = 0; i < list.Items.Count; i++)
@@ -125,6 +130,7 @@ namespace Enhancer
 		}
 		private void build_Click(object sender, EventArgs e)
 		{
+			good = true;
 			build.Enabled = false;
 			List<byte> os = new();
 			save_Click(sender, e);
@@ -134,21 +140,50 @@ namespace Enhancer
 			{
 				File.WriteAllText(Path.Combine(Path.GetTempPath(), "Enhancer\\Source\\") + list.Items[i] + ".asm", files[i]);
 				Process process = new();
-				process.StartInfo = new ProcessStartInfo() { FileName = "nasm", Arguments = "-f bin \"" + Path.Combine(Path.GetTempPath(), "Enhancer\\Source\\") + list.Items[i] + ".asm\" -o \"" + Path.Combine(Path.GetTempPath(), "Enhancer\\Binaries\\") + list.Items[i] + ".bin\"", CreateNoWindow = true, WindowStyle = ProcessWindowStyle.Hidden };
+				process.StartInfo = new ProcessStartInfo() { CreateNoWindow = true, WindowStyle = ProcessWindowStyle.Hidden };
+				process.StartInfo.FileName = "nasm";
+				process.StartInfo.Arguments = "-f bin \"" + Path.Combine(Path.GetTempPath(), "Enhancer\\Source\\") + list.Items[i] + ".asm\" -o \"" + Path.Combine(Path.GetTempPath(), "Enhancer\\Binaries\\") + list.Items[i] + ".bin\"";
+				process.EnableRaisingEvents = true;
+				process.OutputDataReceived += new DataReceivedEventHandler(DataReceived);
+				process.ErrorDataReceived += new DataReceivedEventHandler(DataReceived);
+				process.StartInfo.UseShellExecute = false;
+				process.StartInfo.RedirectStandardOutput = true;
+				process.StartInfo.RedirectStandardError = true;
 				process.Start();
+				process.BeginErrorReadLine();
+				process.BeginOutputReadLine();
 				process.WaitForExit();
 				process.Dispose();
-				byte[] data = File.ReadAllBytes(Path.Combine(Path.GetTempPath(), "Enhancer\\Binaries\\") + list.Items[i] + ".bin");
-				if (os.Count == 0)
+				if (good)
 				{
-					data[510] = 0x55;
-					data[511] = 0xaa;
+					byte[] raw = File.ReadAllBytes(Path.Combine(Path.GetTempPath(), "Enhancer\\Binaries\\") + list.Items[i] + ".bin");
+					byte[] data = Filler(raw);
+					if (os.Count == 0 && raw.Length <= 510)
+					{
+						data[510] = 0x55;
+						data[511] = 0xaa;
+					}
+					else
+					{
+						good = false;
+						MessageBox.Show("Boot sector is too big", "General Error");
+					}
+					os.AddRange(data);
 				}
-				os.AddRange(Filler(data));
 			}
 			Directory.Delete(Path.GetTempPath() + "Enhancer", true);
 			File.WriteAllBytes(Path.GetFileNameWithoutExtension(path) + ".iso", os.ToArray());
 			build.Enabled = true;
+		}
+		private void DataReceived(object sender, DataReceivedEventArgs e)
+		{
+			if (!string.IsNullOrEmpty(e.Data))
+			{
+				good = false;
+				int x = e.Data.LastIndexOf(Path.DirectorySeparatorChar);
+				string tmp = e.Data[(x+1)..];
+				MessageBox.Show(tmp, "Compile Error");
+			}
 		}
 		private byte[] Filler(byte[] data)
 		{
@@ -163,7 +198,7 @@ namespace Enhancer
 		private void StartQemu()
 		{
 			string ttmc = Path.GetFileNameWithoutExtension(path) + ".iso";
-			if (File.Exists(ttmc))
+			if (File.Exists(ttmc) && good)
 			{
 				Process process = new();
 				process.StartInfo = new() { FileName = "qemu-system-x86_64", Arguments = "-drive format=raw,file=\"" + ttmc + "\"", WorkingDirectory = Directory.GetCurrentDirectory() };
@@ -174,7 +209,7 @@ namespace Enhancer
 		}
 		private void Basic(object? sender, KeyEventArgs e)
 		{
-			if (e.Modifiers == Keys.Control)
+			if (sender != null && e.Modifiers == Keys.Control)
 			{
 				if (e.KeyCode == Keys.S)
 				{
