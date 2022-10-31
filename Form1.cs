@@ -12,6 +12,11 @@ namespace Enhancer
 		{
 			InitializeComponent();
 			plus.Enabled = true;
+			foreach (Control ctrl in Controls)
+			{
+				ctrl.KeyDown += new KeyEventHandler(Basic);
+			}
+			KeyDown += new KeyEventHandler(Basic);
 		}
 		private void plus_Click(object sender, EventArgs e)
 		{
@@ -54,6 +59,7 @@ namespace Enhancer
 		}
 		private void save_Click(object sender, EventArgs e)
 		{
+			save.Enabled = false;
 			List<byte[]> bytes = new();
 			for (int i = 0; i < list.Items.Count; i++)
 			{
@@ -71,22 +77,35 @@ namespace Enhancer
 				DialogResult resp = saveFileDialog1.ShowDialog();
 				if (resp == DialogResult.OK)
 				{
-					path = saveFileDialog1.FileName;
+					string? temp = Path.GetDirectoryName(saveFileDialog1.FileName);
+					if (!string.IsNullOrEmpty(temp))
+					{
+						path = saveFileDialog1.FileName;
+						Directory.SetCurrentDirectory(temp);
+					}
 				}
 			}
 			if (!string.IsNullOrEmpty(path))
 			{
 				File.WriteAllBytes(path, Engine.Zip(file));
 			}
+			save.Enabled = true;
 		}
 		private void load_Click(object sender, EventArgs e)
 		{
+			load.Enabled = false;
 			DialogResult resp = openFileDialog1.ShowDialog();
 			if (resp == DialogResult.OK)
 			{
-				path = openFileDialog1.FileName;
-				LoadFile();
+				string? temp = Path.GetDirectoryName(openFileDialog1.FileName);
+				if (!string.IsNullOrEmpty(temp))
+				{
+					path = openFileDialog1.FileName;
+					Directory.SetCurrentDirectory(temp);
+					LoadFile();
+				}
 			}
+			load.Enabled = true;
 		}
 		public void LoadFile()
 		{
@@ -140,6 +159,41 @@ namespace Enhancer
 				bytes.Add(0x00);
 			}
 			return bytes.ToArray();
+		}
+		private void StartQemu()
+		{
+			string ttmc = Path.GetFileNameWithoutExtension(path) + ".iso";
+			if (File.Exists(ttmc))
+			{
+				Process process = new();
+				process.StartInfo = new() { FileName = "qemu-system-x86_64", Arguments = "-drive format=raw,file=\"" + ttmc + "\"", WorkingDirectory = Directory.GetCurrentDirectory() };
+				process.Start();
+				process.WaitForExit();
+				process.Dispose();
+			}
+		}
+		private void Basic(object? sender, KeyEventArgs e)
+		{
+			if (e.Modifiers == Keys.Control)
+			{
+				if (e.KeyCode == Keys.S)
+				{
+					save_Click(sender, e);
+				}
+				else if (e.KeyCode == Keys.O)
+				{
+					load_Click(sender, e);
+				}
+				else if (e.KeyCode == Keys.B)
+				{
+					build_Click(sender, e);
+				}
+				else if (e.KeyCode == Keys.F5)
+				{
+					build_Click(sender, e);
+					StartQemu();
+				}
+			}
 		}
 	}
 }

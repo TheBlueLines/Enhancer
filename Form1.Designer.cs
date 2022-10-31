@@ -47,6 +47,7 @@
 			this.save.Name = "save";
 			this.save.Size = new System.Drawing.Size(150, 40);
 			this.save.TabIndex = 0;
+			this.save.TabStop = false;
 			this.save.Text = "Save";
 			this.save.UseVisualStyleBackColor = true;
 			this.save.Click += new System.EventHandler(this.save_Click);
@@ -58,6 +59,7 @@
 			this.load.Name = "load";
 			this.load.Size = new System.Drawing.Size(150, 40);
 			this.load.TabIndex = 1;
+			this.load.TabStop = false;
 			this.load.Text = "Load";
 			this.load.UseVisualStyleBackColor = true;
 			this.load.Click += new System.EventHandler(this.load_Click);
@@ -69,6 +71,7 @@
 			this.build.Name = "build";
 			this.build.Size = new System.Drawing.Size(150, 40);
 			this.build.TabIndex = 2;
+			this.build.TabStop = false;
 			this.build.Text = "Build";
 			this.build.UseVisualStyleBackColor = true;
 			this.build.Click += new System.EventHandler(this.build_Click);
@@ -85,6 +88,7 @@
 			this.list.Name = "list";
 			this.list.Size = new System.Drawing.Size(150, 332);
 			this.list.TabIndex = 3;
+			this.list.TabStop = false;
 			this.list.SelectedIndexChanged += new System.EventHandler(this.list_SelectedIndexChanged);
 			// 
 			// plus
@@ -96,6 +100,7 @@
 			this.plus.Name = "plus";
 			this.plus.Size = new System.Drawing.Size(75, 40);
 			this.plus.TabIndex = 4;
+			this.plus.TabStop = false;
 			this.plus.Text = "+";
 			this.plus.UseVisualStyleBackColor = true;
 			this.plus.Click += new System.EventHandler(this.plus_Click);
@@ -109,6 +114,7 @@
 			this.minus.Name = "minus";
 			this.minus.Size = new System.Drawing.Size(75, 40);
 			this.minus.TabIndex = 5;
+			this.minus.TabStop = false;
 			this.minus.Text = "-";
 			this.minus.UseVisualStyleBackColor = true;
 			this.minus.Click += new System.EventHandler(this.minus_Click);
@@ -125,6 +131,7 @@
 			this.text.Name = "text";
 			this.text.Size = new System.Drawing.Size(620, 380);
 			this.text.TabIndex = 6;
+			this.text.TabStop = false;
 			this.text.Text = "";
 			// 
 			// openFileDialog1
