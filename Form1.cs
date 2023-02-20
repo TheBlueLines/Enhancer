@@ -114,7 +114,10 @@ namespace Enhancer
 		}
 		public void LoadFile()
 		{
-			list.Items.Clear();
+			nzx = null;
+            text.Enabled = false;
+            minus.Enabled = false;
+            list.Items.Clear();
 			files.Clear();
 			if (File.Exists(path))
 			{
@@ -123,8 +126,8 @@ namespace Enhancer
 				foreach (byte[] value in temp)
 				{
 					string[] tmp = Engine.DeserializeStringArray(value);
-					files.Add(tmp[1]);
-					list.Items.Add(tmp[0]);
+                    list.Items.Add(tmp[0]);
+                    files.Add(tmp[1]);
 				}
 			}
 		}
@@ -154,23 +157,24 @@ namespace Enhancer
 				process.BeginOutputReadLine();
 				process.WaitForExit();
 				process.Dispose();
-				if (good)
+                byte[] raw = File.ReadAllBytes(Path.Combine(Path.GetTempPath(), "Enhancer\\Binaries\\") + list.Items[i] + ".bin");
+				byte[] data = Filler(raw);
+                if (os.Count == 0)
 				{
-					byte[] raw = File.ReadAllBytes(Path.Combine(Path.GetTempPath(), "Enhancer\\Binaries\\") + list.Items[i] + ".bin");
-					byte[] data = Filler(raw);
-					if (os.Count == 0 && raw.Length <= 510)
+					if (raw.Length <= 510)
 					{
-						data[510] = 0x55;
-						data[511] = 0xaa;
-					}
+                        data[510] = 0x55;
+                        data[511] = 0xaa;
+                    }
 					else
 					{
-						good = false;
 						MessageBox.Show("Boot sector is too big", "General Error");
-					}
-					os.AddRange(data);
+                        good = false;
+                        return;
+                    }
 				}
-			}
+                os.AddRange(data);
+            }
 			Directory.Delete(Path.GetTempPath() + "Enhancer", true);
 			File.WriteAllBytes(Path.GetFileNameWithoutExtension(path) + ".iso", os.ToArray());
 			build.Enabled = true;
@@ -206,7 +210,7 @@ namespace Enhancer
 				process.WaitForExit();
 				process.Dispose();
 			}
-		}
+        }
 		private void Basic(object? sender, KeyEventArgs e)
 		{
 			if (sender != null && e.Modifiers == Keys.Control)

@@ -15,8 +15,8 @@ namespace Enhancer
 			if (args.Length > 0)
 			{
 				form1.path = args[0];
-			}
-			form1.LoadFile();
+                form1.LoadFile();
+            }
 			Application.Run(form1);
 		}
 	}
